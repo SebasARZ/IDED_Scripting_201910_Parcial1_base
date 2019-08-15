@@ -5,6 +5,7 @@
         protected float baseMaxSpeed;
 
         protected int Level { get; set; }
+       
 
         protected abstract VehicleType Type { get; }
 
@@ -14,7 +15,13 @@
         {
             get
             {
-                return 0F;
+                float result = baseMaxSpeed * (1 + Level * 0.05f) ;
+
+                if(CurrentPart != null)
+                {
+                    result *= 1 + CurrentPart.SpeedBonus;
+                }
+                return result;
             }
         }
 
@@ -35,6 +42,8 @@
 
             if (Type == part.Type || part.Type == VehicleType.Any)
             {
+                CurrentPart = part;
+                result = true;
             }
 
             return result;
@@ -42,6 +51,11 @@
 
         public void Upgrade()
         {
+            Level += 1;
+            if (CurrentPart != null && Level != 3)
+            {
+                CurrentPart.Upgrade();
+            }
         }
     }
 }
